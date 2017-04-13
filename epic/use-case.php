@@ -33,9 +33,14 @@
 	<li>profileHash (for account password)</li>
 	<li>profilePhone</li>
 	<li>profileSalt (for account password)</li>
-	<strong>Favorite</strong>
+	<strong>Etsy</strong>
 	<li>etsyid (primary key)</li>
-
+	<li>etsyProfiled</li>
+	<li>shopProfile</li>
+	<strong>Favorite</strong>
+	<li>favoriteProfileid (foreign key)</li>
+	<li>favoriteShopId(foreign id)</li>
+	<li>favoriteDate</li>
 	<strong>Relations:</strong>
 	<li>Many users can favorite many shops</li>
 	<li>Many shops can be favorited by many users</li>
