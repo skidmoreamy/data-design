@@ -165,11 +165,75 @@ profileEmail = : profileEmail WHERE profileId = :profileId";
 					throw(new \PDOException("profile id is not positive"));
 				}
 			//create query template
-				$query = "SELECT profile "
-			}
-			}
-}
+				$query = "SELECT profileId, profileEmail FROM profile WHERE profileId =:profileId";
+				$statement = $pdo->prepare($query);
+				//bind the profile if to the place holder in the template
+				$parameter = ["profileId" => $profileId];
+				$statement->execute($parameters);
+				//grab the profile from mySQL
+				try {
+					$profile = null;
+					$statement->setFetchMode (\PDO::FETCH_ASSOC);
+					$ROW = $statement->fetch();
+					if($row !== false) {
+						$profile = new Profile($row["profileId"], $row["profileId"], $row["profileEmail"]);
 
+					}
+			}catch(\Exception $exception)
+					//if the row couldn't be converted, rethrow it
+					throw(new \PDOException ($exception->getMessage(), 0, $exception));
+				}
+				return($profile);
+				}
+
+
+				//gets profile by profileEmail
+			public static function getprofileByprofileEmail(\PDO $pdo, int $profileId) : \SPLFixedArray {
+				//sanitize the profile id before searching
+				if($profileId <= 0) {
+					throw(new \RangeException("profile id must be positive"));
+				}
+				//create query table
+				$query = "SELECT profileEmail,profileId FROM profile WHERE profileId = :profileId";
+				$statement = $pdo->prepare($query);
+				//bind the profileId to the place holder in the template
+				$parameters = ["profileId" => $profileId];
+				$statement->execute($parameters);
+				//build and array of emails
+				$profileEmail = new \SPLFixedArray($statement->rowCount());
+				$statement->setFetchMode()(PDO::FETCH_ASSOC);
+				while(($row = $statement->fetch()) != false) {
+		try{
+					$email = new profileEmail($row["profileEmail"], $row["profileId"]);
+					$email[$profileEmail->key()] = $email;
+					$profileId->next();
+				} catch(\Exception $exception) {
+					//if the row couldn't be converted, rethrow it
+					throw(new \PDOException($exception->fetcMessage(), 0, $exception));
+					}
+					}
+					return($profileEmail);
+
+}
+//gets all the emails
+public static function getAllemails(\PDO $pdo) :\SPLFixedArray {
+		//create query template
+	$query = "SELECT profileEmail, profileId FROM profile";
+	$statement = $pdo->prepare($query);
+	$statement->execute();
+	//build and array of emails
+	$email = \SPLFoxedArray($statement->rowcount());
+	$statement->setFetchMode(\PDO::FETCH_ASSOC);
+	while(($row = $statement->fetch()) !== false) {
+		try{
+			$email = new email($row["profileEmail"], $row["profileId"]);
+
+			$emails[$emails->key()] = $email;
+			$emails->next();
+		} catch()
+	}
+
+}
 
 
 
