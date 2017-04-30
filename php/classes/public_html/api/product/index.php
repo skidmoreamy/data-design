@@ -28,14 +28,14 @@ try {
 
 //you would insert your testing method here
 
-$method = array-key-exists("HTTP_X_HTTP_METHOD",
+$method = array_key-exists("HTTP_X_HTTP_METHOD",
 		$_SERVER) ? $_SERVER["HTTP_X_HTTP_METHOD"] : $_SERVER["REQUEST_METHOD"];
 
 $shopId - filter_input(INPUT_GET, "
 shopName = FILTER_VALIDATE_INT");
 $shopContent = filter_input (INPUT_GET, "shopContent", FILTER_VALIDATE_INT);
 
-if(($method === "DELETE") || $method +++ "PUT") && (
+if(($method === "DELETE") || $method === "PUT") && (
 	empty($id) === true || $id < 0)) {
 throw(new InvalidArgumentException ("id cannot be
 empty or negative", 405));
@@ -100,7 +100,7 @@ empty or negative", 405));
 
  			//enforce the user is signed in and only trying to edit their own tweet
  			if(empty($_SESSION["profile"]) === true || $_SESSION["profile"]->getProfileId() !== $shop->getshopByshopName()) {
-					+				throw(new \InvalidArgumentException("You are not allowed to edit this shop", 403));
+									throw(new \InvalidArgumentException("You are not allowed to edit this shop", 403));
  			}
 
  			// update all attributes
@@ -176,7 +176,8 @@ require_once dirname(_DIR_3) ."/php/lib/xsrf.php";
 require_once("/etc/apache2/capstone-mysql/encrypted-config.php");
 
 use Edu\Cnm\DataDesign\{
-	Profile
+	data-design;
+Profile
 };
 /**
  * API for profile
@@ -295,18 +296,20 @@ if($reply->data === null) {
 // encode and return reply to front end caller
 echo json_encode($reply);
 
+
 <?php
 
-		require_once dirname(__DIR__, 3) . "/vendor/autoload.php";
+		require_once dirname(_DIR_, 3) . "/vendor/autoload.php";
 require_once dirname(__DIR__, 3) . "/php/classes/autoload.php";
 require_once dirname(__DIR__, 3) . "/php/lib/xsrf.php";
 require_once("/etc/apache2/capstone-mysql/encrypted-config.php");
 
+use Edu\Cnm\DataDesign\{
+	Profile,
 };
 /**
  * Api for the favorite class
  *
-
  */
 //verify the session, start if not active
 
@@ -324,26 +327,26 @@ try {
 	//determine which HTTP method was used
 	$method = array_key_exists("HTTP_X_HTTP_METHOD", $_SERVER) ? $_SERVER["HTTP_X_HTTP_METHOD"] : $_SERVER["REQUEST_METHOD"];
 	//sanitize the search parameters
-	$likeProfileId = filter_input(INPUT_GET, "LikeProfileId", FILTER_VALIDATE_INT);
-	$likeTweetId = filter_input(INPUT_GET, "likeTweetId", FILTER_VALIDATE_INT);
+	$favoriteProfileId = filter_input(INPUT_GET, "favoriteProfileId", FILTER_VALIDATE_INT);
+	$favoriteShopId = filter_input(INPUT_GET, "favoriteShopId", FILTER_VALIDATE_INT);
 	if($method === "Get") {
 		//set XSRF cookie
 		setXsrfCookie();
-		//gets a
-		if(empty($likeProfileId) === false) {
-			$like = Like::getLikeByLikeProfileId($pdo, $likeProfileId)->toArray();
-			if($like !== null) {
-				$reply->data = $like;
+		//gets favorite shop
+		if(empty($favoriteProfileId) === false) {
+			$favoriteProfile = favorite::getfavoriteByfavoriteProfileId($pdo, $favoriteProfileId)->toArray();
+			if($favorite !== null) {
+				$reply->data = $favorite;
 			}
-		} else if(empty($likeTweetId) === false) {
-			$like = Like::getLikeByLikeTweetId($pdo, $likeTweetId)->toArray();
-			if($like !== null) {
-				$reply->data = $like;
+		} else if(empty($favoriteShopId) === false) {
+			$favorite = favorite::getfavoriteByfavoriteShopId($pdo, $favoriteShopId)->toArray();
+			if($favorite !== null) {
+				$reply->data = $favorite;
 			}
 		} else {
-			$like = Like::getLikeByLikeTweetIdAndLikeProfileId($pdo, $likeProfileId, $likeTweetId);
-			if($like !== null) {
-				$reply->data = $like;
+			$favorite = favorite::getfavoriteByfavoriteShopIdAndfavoriteProfileId($pdo, $favoriteProfileId, $favoriteShopId);
+			if($favorite !== null) {
+				$reply->data = $favorite;
 			} else {
 				throw (new InvalidArgumentException("Search failed"));
 			}
@@ -353,42 +356,42 @@ try {
 		$requestContent = file_get_contents("php://input");
 		$requestObject = json_decode($requestContent);
 		if($method === "POST") {
-			if(empty($requestObject->likeProfileId) === true) {
-				throw (new \InvalidArgumentException("No Profile linked to the Like", 405));
+			if(empty($requestObject->favoriteShopId) === true) {
+				throw (new \InvalidArgumentException("No shop linked to the favorite", 405));
 			}
-			if(empty($requestObject->likeTweetId) === true) {
-				throw (new \InvalidArgumentException("No tweet linked to the Like", 405));
+			if(empty($requestObject->favoriteProfileId) === true) {
+				throw (new \InvalidArgumentException("No profile linked to the favorite", 405));
 			}
-			if(empty($requestObject->likeDate) === true) {
-				$requestObject->LikeDate = null;
+			if(empty($requestObject->favoriteDate) === true) {
+				$requestObject->favoriteDate = null;
 			}
-			// enforce the user is signed in
+			// error if users isnt signed in
 			if(empty($_SESSION["profile"]) === true) {
-				throw(new \InvalidArgumentException("you must be logged in too like posts", 403));
+				throw(new \InvalidArgumentException("you must be logged in too favorite shops", 403));
 			}
-			$like = new Like($requestObject->likeProfileId, $requestObject->likeTweetId, $requestObject->likeDate);
-			$like->insert($pdo);
-			$reply->message = "liked tweet successful";
+			$favorite = new favorite($requestObject->favoriteProfileId, $requestObject->favoriteShopId, $requestObject->favoriteDate);
+			$favorite->insert($pdo);
+			$reply->message = "favorite shop successful";
 		} else if($method === "DELETE") {
 			//enforce that the end user has a XSRF token.
 			verifyXsrf();
 			//make sure that both the tweetId and profileId are present
-			if(empty($requestObject->likeProfileId && $requestObject->likeTweetDate) === true) {
-				throw (new \InvalidArgumentException("No Profile linked to the Like", 405));
+			if(empty($requestObject->favoriteProfileId && $requestObject->favoriteDate) === true) {
+				throw (new \InvalidArgumentException("No Profile linked to the shop", 405));
 			}
-			//grab the like by its composite key
-			$like = Like::getLikeByLikeTweetIdAndLikeProfileId($pdo, $likeProfileId, $likeTweetId);
-			if($like === null) {
-				throw (new RuntimeException("Like does not exist"));
+			//grab the favorite by its composite key
+			$favorite = favorite::getfavoriteByfavoriteShopIdAndLikefavoriteProfileId($pdo, $favoriteProfileId, $favoriteShopId);
+			if($favorite === null) {
+				throw (new RuntimeException("favorite does not exist"));
 			}
-			//enforce the user is signed in and only trying to edit their own like
-			if(empty($_SESSION["profile"]) === true || $_SESSION["profile"]->getProfileId() !== $requestObject->LikeProfileId) {
-				throw(new \InvalidArgumentException("You are not allowed to delete this tweet", 403));
+			//enforce the user is signed in and only trying to edit their own favorite
+			if(empty($_SESSION["profile"]) === true || $_SESSION["profile"]->getProfileId() !== $requestObject->favoriteProfileId) {
+				throw(new \InvalidArgumentException("You are not allowed to delete this shop", 403));
 			}
 			//preform the actual delete
-			$like->delete($pdo);
+			$favorite->delete($pdo);
 			//update the message
-			//$reply->message = "Like successfully deleted";
+			//$reply->message = "favorite successfully deleted";
 			var_dump($reply->message);
 		}
 	} else {
@@ -405,3 +408,4 @@ if($reply->data === null) {
 }
 // encode and return reply to front end caller
 echo json_encode($reply);
+
