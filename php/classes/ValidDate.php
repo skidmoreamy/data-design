@@ -10,18 +10,7 @@ namespace Edu\Cnm\DataDesign;
  * @version 2.0
  **/
 trait ValidateDate {
-	/**
-	 * custom filter for mySQL date
-	 *
-	 * Converts a string to a DateTime object; this is designed to be used within a mutator method.
-	 *
-	 * @param \DateTime|string $newDate date to validate
-	 * @return \DateTime DateTime object containing the validated date
-	 * @see http://php.net/manual/en/class.datetime.php PHP's DateTime class
-	 * @throws \InvalidArgumentException if the date is in an invalid format
-	 * @throws \RangeException if the date is not a Gregorian date
-	 * @throws \TypeError when type hints fail
-	 **/
+
 	private static function validateDate($newDate) : \DateTime {
 		// base case: if the date is a DateTime object, there's no work to be done
 		if(is_object($newDate) === true && get_class($newDate) === "DateTime") {
