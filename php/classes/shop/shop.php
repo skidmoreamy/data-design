@@ -40,8 +40,8 @@ class shop implements \JsonSerializable {
 	public function __construct(?int $newshopId, ?int $newshopName, string $newshopContent = null) {
 		try {
 			$this->setshopId($newshopId);
-			$this->setTweetProfileId($newshopName);
-			$this->setTweetContent($newshopContent);
+			$this->setshopName($newshopName);
+			$this->setshopContent($newshopContent);
 		}
 			//determine what exception type was thrown
 		catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
@@ -183,7 +183,7 @@ class shop implements \JsonSerializable {
 			throw(new \PDOException("unable to update a shop that does not exist"));
 		}
 		// create query template
-		$query = "UPDATE shop SET shopName = :shopName, tweetContent = :shopContent = :tweetDate WHERE shopId = :shopId";
+		$query = "UPDATE shop SET shopName = :shopName, shopContent = :shopContent = :tweetDate WHERE shopId = :shopId";
 		$statement = $pdo->prepare($query);
 		// bind the member variables to the place holders in the template
 		$parameters = ["shopName" => $this->shopName, "shopContent" => $this->shopContent, "shopId" => $this->shopId];
@@ -193,7 +193,7 @@ class shop implements \JsonSerializable {
 	 * gets the shop by content
 	 *
 	 * @param \PDO $pdo PDO connection object
-	 * @param string  content to search for
+	 * @param string  shop by shop content to search for
 	 * @return \SplFixedArray SplFixedArray of shops found
 	 * @throws \PDOException when mySQL related errors occur
 	 * @throws \TypeError when variables are not the correct data type
@@ -208,9 +208,9 @@ class shop implements \JsonSerializable {
 		// create query template
 		$query = "SELECT shopId, shopName, shopContent FROM shop WHERE shopContent LIKE :shopContent";
 		$statement = $pdo->prepare($query);
-		// bind the tweet content to the place holder in the template
-		$tweetContent = "%$shopContent%";
-		$parameters = ["shopContent" => $tweetContent];
+		// bind the shop content to the place holder in the template
+		$shopContent = "%$shopContent%";
+		$parameters = ["shopContent" => $shopContent];
 		$statement->execute($parameters);
 		// build an array of shops
 		$shops = new \SplFixedArray($statement->rowCount());
@@ -232,7 +232,7 @@ class shop implements \JsonSerializable {
 	 *
 	 * @param \PDO $pdo PDO connection object
 	 * @param int $shopId shop id to search for
-	 * @return Tweet|null shop found or null if not found
+	 * @return shop|null shop found or null if not found
 	 * @throws \PDOException when mySQL related errors occur
 	 * @throws \TypeError when variables are not the correct data type
 	 **/
@@ -266,12 +266,12 @@ class shop implements \JsonSerializable {
 	 *
 	 * @param \PDO $pdo PDO connection object
 	 * @param int $shop name profile id to search by
-	 * @return \SplFixedArray SplFixedArray of Tweets found
+	 * @return \SplFixedArray SplFixedArray of shops found
 	 * @throws \PDOException when mySQL related errors occur
 	 * @throws \TypeError when variables are not the correct data type
 	 **/
 	public static function getshopByshopName(\PDO $pdo, int $shopName) : \SPLFixedArray {
-		// sanitize the name/ id before searching
+		// sanitize the shop name/ id before searching
 		if($shopName <= 0) {
 			throw(new \RangeException("shop name id must be positive"));
 		}
